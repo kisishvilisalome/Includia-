@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="ka" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INCLUDIA — სამყარო ბარიერების გარეშე | ინკლუზიური პლატფორმა</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Georgian -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Dyslexic&family=Noto+Sans+Georgian:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        accessibility: {
+                            highContrastBg: '#000000',
+                            highContrastYellow: '#FFFF00',
+                            highContrastWhite: '#FFFFFF',
+                            highContrastOutline: '#FF0000',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans Georgian', 'sans-serif'],
+                        dyslexic: ['Open Dyslexic', 'Noto Sans Georgian', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Dyslexia Friendly Mode Override */
+        body.dyslexia-font {
+            font-family: 'Open Dyslexic', 'Noto Sans Georgian', sans-serif !important;
+            letter-spacing: 0.12em !important;
+            word-spacing: 0.16em !important;
+            line-height: 1.9 !important;
+        }
+
+        /* High Contrast Mode Overrides */
+        body.high-contrast {
+            background-color: #000000 !important;
+            color: #FFFF00 !important;
+        }
+        body.high-contrast *, 
+        body.high-contrast section,
+        body.high-contrast div,
+        body.high-contrast header,
+        body.high-contrast footer,
+        body.high-contrast card {
+            background-color: #000000 !important;
+            color: #FFFF00 !important;
+            border-color: #FFFF00 !important;
+            box-shadow: none !important;
+        }
+        body.high-contrast a, 
+        body.high-contrast button,
+        body.high-contrast input,
+        body.high-contrast select,
+        body.high-contrast textarea {
+            color: #FFFFFF !important;
+            background-color: #111111 !important;
+            border: 2px solid #FFFF00 !important;
+        }
+        body.high-contrast button:hover,
+        body.high-contrast a:hover {
+            background-color: #FFFF00 !important;
+            color: #000000 !important;
+        }
+
+        /* Highlight Interactive Elements */
+        body.highlight-interactive a,
+        body.highlight-interactive button,
+        body.highlight-interactive input,
+        body.highlight-interactive select,
+        body.highlight-interactive [tabindex="0"] {
+            outline: 4px solid #f59e0b !important;
+            outline-offset: 3px !important;
+        }
+
+        /* Custom Focus Ring for High Accessibility */
+        :focus-visible {
+            outline: 4px solid #0284c7 !important;
+            outline-offset: 3px !important;
+        }
+
+        body.high-contrast :focus-visible {
+            outline: 4px solid #FFFF00 !important;
+            outline-offset: 4px !important;
+        }
+
+        /* Custom Animations */
+        @keyframes alertFlash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .visual-alert-flash {
+            animation: alertFlash 0.5s ease-in-out 2;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col antialiased transition-colors duration-200" id="body-tag">
+
+    <!-- SKIP TO MAIN CONTENT LINK FOR KEYBOARD & SCREEN READER USERS -->
+    <a href="#main-content" 
+       class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-amber-400 focus:text-slate-950 focus:font-bold focus:text-lg focus:shadow-2xl focus:rounded-b-lg focus:outline-none"
+       id="skip-link">
+       გადასვლა ძირითად შინაარსზე (Skip to main content)
+    </a>
+
+    <!-- VISUAL ALERT BANNER CONTAINER (FOR HEARING IMPAIRED & VISUAL CONFIRMATIONS) -->
+    <div id="visual-alert-container" class="fixed top-4 right-4 left-4 md:left-auto md:w-96 z-[90] space-y-3 pointer-events-none" aria-live="assertive" aria-atomic="true"></div>
+
+    <!-- ACCESSIBILITY TOOLBAR (STICKY TOP BAR) -->
+    <header class="sticky top-0 z-50 bg-slate-900 text-white shadow-xl border-b border-slate-800" role="banner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-center justify-between py-2 gap-2">
+                
+                <!-- Narrator Controls -->
+                <div class="flex items-center space-x-2 flex-wrap">
+                    <span class="text-xs uppercase tracking-wider text-slate-400 font-bold hidden sm:inline mr-1" id="a11y-label">
+                        <i class="fa-solid fa-universal-access text-amber-400 mr-1" aria-hidden="true"></i> ადაპტაცია:
+                    </span>
+
+                    <button id="btn-toggle-narrator" 
+                            onclick="toggleNarrator()" 
+                            aria-pressed="false"
+                            class="min-h-[48px] px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium text-xs sm:text-sm flex items-center space-x-2 border border-slate-700 transition"
+                            title="ჩართეთ ან გამორთეთ ხმოვანი წამკითხველი">
+                        <i class="fa-solid fa-volume-high text-amber-400" id="narrator-icon" aria-hidden="true"></i>
+                        <span id="narrator-text">ნარატორი: <strong class="text-rose-400">გამორთული</strong></span>
+                    </button>
+
+                    <button id="btn-read-page" 
+                            onclick="readEntirePage()" 
+                            class="min-h-[48px] px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium text-xs sm:text-sm flex items-center space-x-1 border border-slate-700 transition"
+                            title="წაიკითხე მთელი გვერდი ხმამაღლა">
+                        <i class="fa-solid fa-play text-emerald-400" aria-hidden="true"></i>
+                        <span class="hidden md:inline">გვერდის წაკითხვა</span>
+                    </button>
+
+                    <button id="btn-stop-speech" 
+                            onclick="stopSpeech()" 
+                            class="min-h-[48px] px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium text-xs sm:text-sm flex items-center space-x-1 border border-slate-700 transition"
+                            title="გააჩერე ხმოვანი გაჟღერება">
+                        <i class="fa-solid fa-stop text-rose-400" aria-hidden="true"></i>
+                        <span class="hidden md:inline">გაჩერება</span>
+                    </button>
+                </div>
+
+                <!-- Visual Adaptations -->
+                <div class="flex items-center space-x-1 sm:space-x-2 flex-wrap">
+                    <!-- Contrast Toggle -->
+                    <button onclick="toggleHighContrast()" 
+                            id="btn-high-contrast"
+                            aria-pressed="false"
+                            class="min-h-[48px] min-w-[48px] p-2 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg text-xs sm:text-sm font-semibold flex items-center justify-center border border-slate-700"
+                            title="მაღალი კონტრასტულობის რეჟიმი">
+                        <i class="fa-solid fa-circle-half-stroke mr-1" aria-hidden="true"></i>
+                        <span class="sr-only sm:not-sr-only">კონტრასტი</span>
+                    </button>
+
+                    <!-- Font Sizer -->
+                    <div class="flex items-center bg-slate-800 rounded-lg border border-slate-700 p-1" role="group" aria-label="შრიფტის ზომის შეცვლა">
+                        <button onclick="setFontSize(100)" class="min-h-[40px] px-2 text-xs font-bold text-white hover:bg-slate-700 rounded" title="ნორმალური შრიფტი (100%)">A</button>
+                        <button onclick="setFontSize(125)" class="min-h-[40px] px-2 text-sm font-bold text-white hover:bg-slate-700 rounded" title="დიდი შრიფტი (125%)">A+</button>
+                        <button onclick="setFontSize(150)" class="min-h-[40px] px-2 text-base font-bold text-white hover:bg-slate-700 rounded" title="ძალიან დიდი შრიფტი (150%)">A++</button>
+                    </div>
+
+                    <!-- Dyslexia Font Toggle -->
+                    <button onclick="toggleDyslexiaFont()" 
+                            id="btn-dyslexia-font"
+                            aria-pressed="false"
+                            class="min-h-[48px] px-2 sm:px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs sm:text-sm font-semibold border border-slate-700"
+                            title="დისლექსიისთვის ადაპტირებული შრიფტი">
+                        <i class="fa-solid fa-font mr-1 text-sky-400" aria-hidden="true"></i>
+                        <span class="hidden lg:inline">დისლექსიური შრიფტი</span>
+                    </button>
+
+                    <!-- Highlight Interactive Elements -->
+                    <button onclick="toggleHighlightInteractive()" 
+                            id="btn-highlight-interactive"
+                            aria-pressed="false"
+                            class="min-h-[48px] px-2 sm:px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs sm:text-sm font-semibold border border-slate-700"
+                            title="ღილაკებისა და ბმულების გამოკვეთა">
+                        <i class="fa-solid fa-border-all text-amber-400" aria-hidden="true"></i>
+                        <span class="sr-only sm:not-sr-only sm:ml-1">გამოკვეთა</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="bg-white shadow-md border-b border-slate-200 sticky top-[60px] z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-xl bg-brand-600 text-white flex items-center justify-center text-2xl font-black shadow-lg">
+                        <i class="fa-solid fa-wheelchair" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <a href="#" class="text-2xl font-extrabold tracking-tight text-slate-900 flex items-center focus:outline-none">
+                            INCLUDIA<span class="text-brand-600 ml-1">.ge</span>
+                        </a>
+                        <p class="text-xs text-slate-500 font-medium">ინკლუზიური ტურიზმი და გამოცდილებები</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <button onclick="openHostModal()" 
+                            class="min-h-[48px] px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition flex items-center space-x-2 focus:ring-4 focus:ring-emerald-300">
+                        <i class="fa-solid fa-plus-circle text-lg" aria-hidden="true"></i>
+                        <span>განათავსე აქტივობა უფასოდ</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="flex-grow">
+        
+        <!-- HERO SECTION -->
+        <section class="bg-gradient-to-b from-brand-50 to-slate-50 py-12 md:py-16 border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-brand-100 text-brand-700 text-sm font-bold">
+                            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                            <span>100% ამოწმებული ხელმისაწვდომობა</span>
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 leading-tight">
+                            INCLUDIA — <span class="text-brand-600">სამყარო ბარიერების გარეშე</span>
+                        </h1>
+                        <p class="text-lg md:text-xl text-slate-700 leading-relaxed font-normal">
+                            ვერიფიცირებული ინკლუზიური ტურები, ადაპტირებული სასტუმროები და შემოქმედებითი მასტერკლასები საქართველოში. აღმოაჩინეთ გარემო, სადაც თითოეული დეტალი მორგებულია თქვენს საჭიროებებზე.
+                        </p>
+
+                        <!-- Key Accessibility Quick Badges -->
+                        <div class="pt-2 flex flex-wrap gap-3">
+                            <span class="px-3 py-2 bg-white rounded-lg shadow-sm border border-slate-200 text-xs font-semibold text-slate-700 flex items-center space-x-2">
+                                <i class="fa-solid fa-wheelchair text-brand-600" aria-hidden="true"></i>
+                                <span>ეტლით მისაწვდომი</span>
+                            </span>
+                            <span class="px-3 py-2 bg-white rounded-lg shadow-sm border border-slate-200 text-xs font-semibold text-slate-700 flex items-center space-x-2">
+                                <i class="fa-solid fa-hands-asl-interpreting text-indigo-600" aria-hidden="true"></i>
+                                <span>ჟესტური ენა</span>
+                            </span>
+                            <span class="px-3 py-2 bg-white rounded-lg shadow-sm border border-slate-200 text-xs font-semibold text-slate-700 flex items-center space-x-2">
+                                <i class="fa-solid fa-braille text-amber-600" aria-hidden="true"></i>
+                                <span>ტაქტილური/ბრაილი</span>
+                            </span>
+                            <span class="px-3 py-2 bg-white rounded-lg shadow-sm border border-slate-200 text-xs font-semibold text-slate-700 flex items-center space-x-2">
+                                <i class="fa-solid fa-brain text-emerald-600" aria-hidden="true"></i>
+                                <span>სენსორულად მშვიდი</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Hero Visual Stat Box -->
+                    <div class="lg:col-span-5 bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-slate-100 space-y-6">
+                        <h2 class="text-xl font-bold text-slate-900 border-b pb-3 flex items-center space-x-2">
+                            <i class="fa-solid fa-circle-check text-emerald-500" aria-hidden="true"></i>
+                            <span>INCLUDIA-ს ხარისხის სტანდარტი</span>
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-bold">1</div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 text-sm">ადგილობრივი ინსპექტირება</h3>
+                                    <p class="text-xs text-slate-600">ჩვენი გუნდი პირადად ამოწმებს პანდუსებს, კარების სიგანეს და სველ წერტილებს.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center shrink-0 font-bold">2</div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 text-sm">გამჭვირვალე ფასწარმოქმნა</h3>
+                                    <p class="text-xs text-slate-600">არანაირი ფარული გადასახადი. მომსახურების საკომისიო მკაფიოდ არის მითითებული.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 font-bold">3</div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 text-sm">ადაპტირებული ასისტენტი</h3>
+                                    <p class="text-xs text-slate-600">საჭიროების შემთხვევაში ჟესტური ენის თარჯიმნის ან პერსონალური ასისტენტის ჯავშანი.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN SEARCH & ACCESSIBILITY FILTER SECTION -->
+        <section class="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-slate-200 space-y-6">
+                
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900" id="filter-heading">მრავალპროფილური ჭკვიანი ფილტრი</h2>
+                        <p class="text-sm text-slate-600">აირჩიეთ თქვენს სპეციფიკურ საჭიროებებზე მორგებული აქტივობები</p>
+                    </div>
+
+                    <!-- Category Tabs -->
+                    <div class="flex flex-wrap gap-2" role="tablist" aria-label="კატეგორიები">
+                        <button onclick="setCategoryFilter('all')" id="cat-all" role="tab" aria-selected="true" class="cat-btn min-h-[48px] px-4 py-2 rounded-xl text-sm font-bold bg-brand-600 text-white transition">ყველა</button>
+                        <button onclick="setCategoryFilter('hotel')" id="cat-hotel" role="tab" aria-selected="false" class="cat-btn min-h-[48px] px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">სასტუმროები</button>
+                        <button onclick="setCategoryFilter('workshop')" id="cat-workshop" role="tab" aria-selected="false" class="cat-btn min-h-[48px] px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">მასტერკლასები</button>
+                        <button onclick="setCategoryFilter('tour')" id="cat-tour" role="tab" aria-selected="false" class="cat-btn min-h-[48px] px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">ტურები</button>
+                    </div>
+                </div>
+
+                <!-- Multi-Disability Need Filter Buttons -->
+                <div>
+                    <span class="block text-sm font-extrabold uppercase tracking-wider text-slate-500 mb-3">სპეციფიკური მისაწვდომობა:</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" role="group" aria-label="მისაწვდომობის ფილტრები">
+                        
+                        <!-- Wheelchair Filter -->
+                        <button onclick="toggleNeedFilter('wheelchair')" id="filter-wheelchair" 
+                                aria-pressed="false"
+                                class="need-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 hover:bg-slate-100 flex items-center space-x-3 text-left transition focus:ring-4 focus:ring-brand-300">
+                            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-wheelchair text-xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <span class="font-bold text-sm block text-slate-900">ეტლით მოსარგებლე</span>
+                                <span class="text-xs text-slate-500 block">პანდუსი, ადაპტ. აბაზანა</span>
+                            </div>
+                        </button>
+
+                        <!-- Visual Impairment Filter -->
+                        <button onclick="toggleNeedFilter('visual')" id="filter-visual" 
+                                aria-pressed="false"
+                                class="need-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 hover:bg-slate-100 flex items-center space-x-3 text-left transition focus:ring-4 focus:ring-amber-300">
+                            <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-eye-low-vision text-xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <span class="font-bold text-sm block text-slate-900">მხედველობის ადაპტაცია</span>
+                                <span class="text-xs text-slate-500 block">ბრაილი, აუდიო გიდი</span>
+                            </div>
+                        </button>
+
+                        <!-- Hearing Impairment Filter -->
+                        <button onclick="toggleNeedFilter('hearing')" id="filter-hearing" 
+                                aria-pressed="false"
+                                class="need-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 hover:bg-slate-100 flex items-center space-x-3 text-left transition focus:ring-4 focus:ring-indigo-300">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-hands-asl-interpreting text-xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <span class="font-bold text-sm block text-slate-900">სმენის ადაპტაცია</span>
+                                <span class="text-xs text-slate-500 block">ჟესტური ენა, ვიზუალი</span>
+                            </div>
+                        </button>
+
+                        <!-- Neurodivergent / Sensory Filter -->
+                        <button onclick="toggleNeedFilter('sensory')" id="filter-sensory" 
+                                aria-pressed="false"
+                                class="need-btn min-h-[56px] p-3 rounded-xl border-2 border-slate-200 bg-slate-50 hover:bg-slate-100 flex items-center space-x-3 text-left transition focus:ring-4 focus:ring-emerald-300">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-brain text-xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <span class="font-bold text-sm block text-slate-900">სენსორულად მშვიდი</span>
+                                <span class="text-xs text-slate-500 block">დაბალი ხმაური, მშვიდი სივრცე</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Filters Count & Reset -->
+                <div class="flex items-center justify-between text-sm text-slate-600 pt-2">
+                    <span id="results-count-text">მოიძებნა <strong class="text-slate-900">6</strong> ხელმისაწვდომი აქტივობა</span>
+                    <button onclick="resetFilters()" class="min-h-[48px] px-3 py-1 text-brand-600 font-bold hover:underline flex items-center space-x-1">
+                        <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                        <span>ფილტრების გასუფთავება</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CARDS GRID SECTION -->
+        <section class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="activity-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" aria-live="polite">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-white mt-16 border-t border-slate-800" role="contentinfo">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="space-y-3">
+                    <h3 class="text-xl font-bold text-white">INCLUDIA Georgia</h3>
+                    <p class="text-slate-400 text-sm">პირველი ქართული ინკლუზიური პლატფორმა, რომელიც აერთიანებს შშმ პირებს, მასპინძლებსა და გიდებს საქართველოში.</p>
+                    <p class="text-xs text-slate-500">WCAG 2.1 AAA სტანდარტების სრული დაცვით.</p>
+                </div>
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-200">სწრაფი ბმულები</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#main-content" class="hover:text-amber-400 underline-offset-4 hover:underline min-h-[48px] inline-flex items-center">მთავარი</a></li>
+                        <li><button onclick="openHostModal()" class="hover:text-amber-400 underline-offset-4 hover:underline text-left min-h-[48px] inline-flex items-center">მასპინძლის რეგისტრაცია</button></li>
+                        <li><button onclick="triggerAccessibilityGuide()" class="hover:text-amber-400 underline-offset-4 hover:underline text-left min-h-[48px] inline-flex items-center">ხელმისაწვდომობის ინსტრუქცია</button></li>
+                    </ul>
+                </div>
+                <div class="space-y-3">
+                    <h4 class="font-bold text-slate-200">კონტაქტი და მხარდაჭერა</h4>
+                    <p class="text-sm text-slate-400"><i class="fa-solid fa-envelope text-amber-400 mr-2"></i> support@includia.ge</p>
+                    <p class="text-sm text-slate-400"><i class="fa-solid fa-phone text-amber-400 mr-2"></i> +995 (32) 200 11 22 (ვიდეო ზარი ჟესტური ენით)</p>
+                    <p class="text-sm text-slate-400"><i class="fa-solid fa-location-dot text-amber-400 mr-2"></i> თბილისი, საქართველო</p>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-8 pt-6 text-center text-xs text-slate-500">
+                © 2026 INCLUDIA. ყველა უფლება დაცულია. დამზადებულია ინკლუზიური თანასწორობისთვის.
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: VERIFICATION CHECKLIST MODAL -->
+    <div id="modal-verification" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="verification-modal-title">
+        <div class="bg-white text-slate-900 rounded-2xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeVerificationModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 min-w-[48px] min-h-[48px] rounded-full flex items-center justify-center text-xl font-bold" aria-label="ფანჯრის დახურვა">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 text-emerald-600 mb-4">
+                <i class="fa-solid fa-circle-check text-3xl" aria-hidden="true"></i>
+                <div>
+                    <h3 id="verification-modal-title" class="text-xl font-bold text-slate-900">INCLUDIA ვერიფიკაციის ოქმი</h3>
+                    <p class="text-xs text-slate-500" id="verification-item-name">აქტივობის დასახელება</p>
+                </div>
+            </div>
+
+            <p class="text-sm text-slate-700 mb-4">ჩვენმა ინსპექტორებმა ადგილზე გადაამოწმეს შემდეგი მისაწვდომობის პარამეტრები:</p>
+
+            <div class="space-y-3 border-t border-b border-slate-200 py-4 mb-6" id="verification-checklist-list">
+                <!-- Filled dynamically via JS -->
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="closeVerificationModal()" class="min-h-[48px] px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition">
+                    გასაგებია
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ACCESSIBLE BOOKING MODAL -->
+    <div id="modal-booking" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
+        <div class="bg-white text-slate-900 rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 min-w-[48px] min-h-[48px] rounded-full flex items-center justify-center text-xl font-bold" aria-label="დახურვა">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+
+            <h3 id="booking-modal-title" class="text-2xl font-bold text-slate-900 mb-1">ჯავშნის გაფორმება</h3>
+            <p class="text-sm text-slate-600 mb-6" id="booking-item-title">აქტივობა</p>
+
+            <form id="booking-form" onsubmit="submitBooking(event)" class="space-y-5">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="booking-date" class="block text-sm font-bold text-slate-800 mb-1">თარიღი <span class="text-rose-500">*</span></label>
+                        <input type="date" id="booking-date" required class="w-full min-h-[48px] p-3 rounded-xl border border-slate-300 text-slate-900 focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label for="booking-guests" class="block text-sm font-bold text-slate-800 mb-1">მონაწილეთა რაოდენობა <span class="text-rose-500">*</span></label>
+                        <select id="booking-guests" onchange="updatePriceCalculation()" class="w-full min-h-[48px] p-3 rounded-xl border border-slate-300 text-slate-900 focus:ring-2 focus:ring-brand-500">
+                            <option value="1">1 პირი</option>
+                            <option value="2">2 პირი</option>
+                            <option value="3">3 პირი</option>
+                            <option value="4">4 პირი</option>
+                            <option value="5">5+ პირი</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-800 mb-2">დამატებითი ადაპტაციური მოთხოვნები:</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-3 min-h-[44px] cursor-pointer">
+                            <input type="checkbox" id="req-sign-lang" class="w-5 h-5 text-brand-600 rounded">
+                            <span class="text-sm text-slate-700">საჭიროა ჟესტური ენის თარჯიმანი (+0 ₾)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 min-h-[44px] cursor-pointer">
+                            <input type="checkbox" id="req-wheelchair-ramp" class="w-5 h-5 text-brand-600 rounded">
+                            <span class="text-sm text-slate-700">საჭიროა ეტლის ასასვლელი დამხმარე (+0 ₾)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 min-h-[44px] cursor-pointer">
+                            <input type="checkbox" id="req-quiet-space" class="w-5 h-5 text-brand-600 rounded">
+                            <span class="text-sm text-slate-700">სენსორულად მშვიდი ზონის მომზადება (+0 ₾)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Transparent Fee Breakdown -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                    <h4 class="font-bold text-slate-800 text-sm">გამჭვირვალე ფასის კალკულაცია:</h4>
+                    <div class="flex justify-between text-sm text-slate-600">
+                        <span>მასპინძლის ფასი:</span>
+                        <span id="price-host">0 ₾</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-slate-600">
+                        <span>პლატფორმის მომსახურების საკომისიო (10%):</span>
+                        <span id="price-fee">0 ₾</span>
+                    </div>
+                    <div class="border-t border-slate-200 pt-2 flex justify-between font-extrabold text-slate-900 text-base">
+                        <span>სულ გადასახდელი:</span>
+                        <span id="price-total" class="text-brand-600">0 ₾</span>
+                    </div>
+                </div>
+
+                <!-- Personal Info -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="user-name" class="block text-sm font-bold text-slate-800 mb-1">სახელი, გვარი <span class="text-rose-500">*</span></label>
+                        <input type="text" id="user-name" required placeholder="მაგ: გიორგი ბერიძე" class="w-full min-h-[48px] p-3 rounded-xl border border-slate-300 text-slate-900">
+                    </div>
+                    <div>
+                        <label for="user-phone" class="block text-sm font-bold text-slate-800 mb-1">ტელეფონი (SMS/WhatsApp) <span class="text-rose-500">*</span></label>
+                        <input type="tel" id="user-phone" required placeholder="599 00 00 00" class="w-full min-h-[48px] p-3 rounded-xl border border-slate-300 text-slate-900">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full min-h-[52px] bg-brand-600 hover:bg-brand-700 text-white font-black text-lg rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                    <span>დაჯავშნა და დადასტურება</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: FREE HOST ONBOARDING MODAL -->
+    <div id="modal-host" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="host-modal-title">
+        <div class="bg-white text-slate-900 rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeHostModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 min-w-[48px] min-h-[48px] rounded-full flex items-center justify-center text-xl font-bold" aria-label="დახურვა">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+
+            <h3 id="host-modal-title" class="text-2xl font-bold text-slate-900 mb-1">განათავსეთ თქვენი აქტივობა უფასოდ</h3>
+            <p class="text-sm text-slate-600 mb-6">შემოუერთდით საქართველოში პირველ ინკლუზიურ ქსელს</p>
+
+            <form id="host-form" onsubmit="submitHostActivity(event)" class="space-y-4">
+                <div>
+                    <label for="host-title" class="block text-sm font-bold text-slate-800 mb-1">აქტივობის/სასტუმროს დასახელება <span class="text-rose-500">*</span></label>
+                    <input type="text" id="host-title" required placeholder="მაგ: ადაპტირებული კერამიკის სახელოსნო" class="w-full min-h-[48px] p-3 rounded-xl border border-slate-300">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="host-category" class="block text-sm font-bold text-slate-800 mb-1">კატეგორია</label>
+                        <select id="host-category" class="w-full min-h-[48px] p-3 rounded-xl border border-slate-300">
+                            <option value="hotel">სასტუმრო / განთავსება</option>
+                            <option value="workshop">შემოქმედებითი მასტერკლასი</option>
+                            <option value="tour">ინკლუზიური ტური</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="host-price" class="block text-sm font-bold text-slate-800 mb-1">ფასი ერთ პირზე (₾) <span class="text-rose-500">*</span></label>
+                        <input type="number" id="host-price" required min="0" placeholder="30" class="w-full min-h-[48px] p-3 rounded-xl border border-slate-300">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="host-location" class="block text-sm font-bold text-slate-800 mb-1">მდებარეობა / ქალაქი <span class="text-rose-500">*</span></label>
+                    <input type="text" id="host-location" required placeholder="მაგ: თბილისი, სოლოლაკი" class="w-full min-h-[48px] p-3 rounded-xl border border-slate-300">
+                </div>
+
+                <!-- Self Accessibility Assessment Checklist -->
+                <div class="border border-slate-200 p-4 rounded-xl bg-slate-50 space-y-2">
+                    <span class="block text-sm font-bold text-slate-900 mb-1">თვითშეფასების მისაწვდომობის ჩექლისტი:</span>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="host-check-wheelchair" class="w-5 h-5 text-brand-600 rounded">
+                        <span class="text-xs sm:text-sm text-slate-700">სივრცეში არის პანდუსი და 85+ სმ სიგანის კარები</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="host-check-visual" class="w-5 h-5 text-brand-600 rounded">
+                        <span class="text-xs sm:text-sm text-slate-700">არის ბრაილის/ტაქტილური წარწერები ან აუდიო გიდი</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="host-check-hearing" class="w-5 h-5 text-brand-600 rounded">
+                        <span class="text-xs sm:text-sm text-slate-700">გვყავს ჟესტური ენის მცოდნე პერსონალი / ვიზუალური გზამკვლევი</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="host-check-sensory" class="w-5 h-5 text-brand-600 rounded">
+                        <span class="text-xs sm:text-sm text-slate-700">შესაძლებელია სენსორულად მშვიდი გარემოს უზრუნველყოფა</span>
+                    </label>
+                </div>
+
+                <div>
+                    <label for="host-desc" class="block text-sm font-bold text-slate-800 mb-1">მოკლე აღწერა <span class="text-rose-500">*</span></label>
+                    <textarea id="host-desc" required rows="3" placeholder="აღწერეთ თქვენი აქტივობა და მისაწვდომობის დეტალები..." class="w-full p-3 rounded-xl border border-slate-300"></textarea>
+                </div>
+
+                <button type="submit" class="w-full min-h-[52px] bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg rounded-xl shadow-lg transition">
+                    განაცხადის გაგზავნა ვერიფიკაციისთვის
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        /* ==========================================================================
+           1. DEMO DATA (6-8 ACCESSIBLE CARDS)
+           ========================================================================== */
+        let activities = [
+            {
+                id: 'act-1',
+                title: "სასტუმრო 'კახური ველები' — ადაპტირებული ნომრები",
+                category: 'hotel',
+                location: 'თელავი, კახეთი',
+                price: 120,
+                rating: 4.9,
+                reviewsCount: 28,
+                image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+                verified: true,
+                needs: ['wheelchair', 'hearing', 'sensory'],
+                signLanguageAvailable: true,
+                visualInstructions: true,
+                description: 'სრულად ადაპტირებული სასტუმრო თელავში. პანდუსები, ფართო კარები (95 სმ), ადაპტირებული სველი წერტილები ხელსაჭიდებითა და ვიზუალური განგაშის სისტემით.',
+                verificationChecklist: [
+                    "კარის სიგანე: 95 სმ (სტანდარტი 80+)",
+                    "სრულიად უსაფეხურო შესასვლელი და პანდუსი 6% დახრილობით",
+                    "ადაპტირებული შხაპი დასაჯდომი სკამით",
+                    "ვიზუალური სახანძრო განგაში (მოციმციმე შუქურა)",
+                    "მშვიდი სენსორული ეზო"
+                ]
+            },
+            {
+                id: 'act-2',
+                title: 'ტაქტილური კერამიკისა და თხევადი თიხის მასტერკლასი',
+                category: 'workshop',
+                location: 'თბილისი, სოლოლაკი',
+                price: 35,
+                rating: 5.0,
+                reviewsCount: 42,
+                image: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80',
+                verified: true,
+                needs: ['visual', 'sensory', 'wheelchair'],
+                signLanguageAvailable: false,
+                visualInstructions: true,
+                description: 'შემოქმედებითი სახელოსნო მორგებული უსინათლო და მცირედმხედველ პირებზე. ტაქტილური ნიმუშები, ბრაილის ინსტრუქციები და მშვიდი აკუსტიკური გარემო.',
+                verificationChecklist: [
+                    "ტაქტილური ბილიკები სახელოსნოში",
+                    "ბრაილის შრიფტით დაბეჭდილი მასალები",
+                    "დაბალი ხმაურის დონე (<40dB)",
+                    "ეტლით მისაწვდომი სამუშაო მაგიდები (სიმაღლე 75 სმ)"
+                ]
+            },
+            {
+                id: 'act-3',
+                title: 'მცხეთის ისტორიული ტური ჟესტური ენის გიდით',
+                category: 'tour',
+                location: 'მცხეთა, საქართველო',
+                price: 50,
+                rating: 4.8,
+                reviewsCount: 19,
+                image: 'https://images.unsplash.com/photo-1589561084283-930aa7b1ce50?auto=format&fit=crop&w=800&q=80',
+                verified: true,
+                needs: ['hearing', 'wheelchair'],
+                signLanguageAvailable: true,
+                visualInstructions: true,
+                description: 'სპეციალური ტური სვეტიცხოველსა და ჯვარში. პროფესიონალი ჟესტური ენის თარჯიმანი და ადაპტირებული მარშრუტები ეტლით გადასაადგილებლად.',
+                verificationChecklist: [
+                    "სერტიფიცირებული ჟესტური ენის გიდი მთელი ტურის განმავლობაში",
+                    "სპეციალურად შერჩეული უსაფეხურო მარშრუტები",
+                    "ვიზუალური ილუსტრირებული გზამკვლევი თითოეული მონაწილისთვის"
+                ]
+            },
+            {
+                id: 'act-4',
+                title: "ბუტიკ-სასტუმრო 'თბილისური ეზო' სენსორული ზონით",
+                category: 'hotel',
+                location: 'თბილისი, ჩუღურეთი',
+                price: 150,
+                rating: 4.7,
+                reviewsCount: 31,
+                image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80',
+                verified: true,
+                needs: ['sensory', 'visual'],
+                signLanguageAvailable: true,
+                visualInstructions: true,
+                description: 'სასტუმრო ნეიროდივერგენტული სტუმრებისთვის. რეგულირებადი განათება, ხმისიზოლაცია და სპეციალური დამამშვიდებელი სენსორული ოთახი.',
+                verificationChecklist: [
+                    "ხმისიზოლირებული ოთახები (Double Glazing)",
+                    "განათების სიკაშკაშის რეგულირება (Dimmable Lights)",
+                    "მშვიდი ზონა სენსორული გადატვირთვის თავიდან ასაცილებლად"
+                ]
+            },
+            {
+                id: 'act-5',
+                title: 'ციფრული უნარების ადაპტირებული ვორქშოფი',
+                category: 'workshop',
+                location: 'ონლაინ / თბილისი (Tech Park)',
+                price: 20,
+                rating: 4.9,
+                reviewsCount: 15,
+                image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
+                verified: true,
+                needs: ['visual', 'hearing'],
+                signLanguageAvailable: true,
+                visualInstructions: true,
+                description: 'ვებ-ხელმისაწვდომობისა და ციფრული ტექნოლოგიების კურსი. ეკრანის წამკითხველებთან (Screen Readers) ადაპტირებული მასალები.',
+                verificationChecklist: [
+                    "სრულიად ხელმისაწვდომი ციფრული პლატფორმა",
+                    "სუბტიტრები რეალურ დროში",
+                    "ჟესტური ენის სინქრონული თარგმანი"
+                ]
+            },
+            {
+                id: 'act-6',
+                title: 'ბოტანიკური ბაღის მრავალსენსორული ტური',
+                category: 'tour',
+                location: 'თბილისი',
+                price: 25,
+                rating: 5.0,
+                reviewsCount: 54,
+                image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=800&q=80',
+                verified: true,
+                needs: ['visual', 'wheelchair', 'sensory'],
+                signLanguageAvailable: false,
+                visualInstructions: true,
+                description: 'სურნელოვანი მცენარეების, არომატებისა და ტაქტილური მცენარეების ტური. სპეციალურად დაპროექტებული პანდუსები და აუდიო-ნარატივი.',
+                verificationChecklist: [
+                    "ტაქტილური მცენარეების ზონა ხელით შეხებისთვის",
+                    "აუდიო გზამკვლევი ავტომატური GPS გააქტიურებით",
+                    "ეტლით სრულიად მისაწვდომი ხის ბილიკები"
+                ]
+            }
+        ];
+
+        /* ==========================================================================
+           2. STATE MANAGEMENT & ACCESSIBILITY APP LOGIC
+           ========================================================================== */
+        let state = {
+            categoryFilter: 'all',
+            selectedNeeds: [], // 'wheelchair', 'visual', 'hearing', 'sensory'
+            narratorActive: false,
+            highContrast: false,
+            dyslexiaFont: false,
+            highlightInteractive: false,
+            fontSizePct: 100,
+            activeBookingItem: null
+        };
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCards();
+            setupNarratorHoverEvents();
+        });
+
+        /* ==========================================================================
+           3. NARRATOR & WEB SPEECH API (ხმოვანი ნარატორი)
+           ========================================================================== */
+        function toggleNarrator() {
+            state.narratorActive = !state.narratorActive;
+            const btn = document.getElementById('btn-toggle-narrator');
+            const textSpan = document.getElementById('narrator-text');
+
+            if (state.narratorActive) {
+                btn.setAttribute('aria-pressed', 'true');
+                textSpan.innerHTML = 'ნარატორი: <strong class="text-emerald-400">ჩართული</strong>';
+                showVisualAlert('ხმოვანი ნარატორი ჩაირთო. მიუთითეთ ტექსტს წასაკითხად.', 'success');
+                speakText("ხმოვანი ნარატორი გააქტიურებულია. მიუთითეთ ელემენტს წასაკითხად.");
+            } else {
+                btn.setAttribute('aria-pressed', 'false');
+                textSpan.innerHTML = 'ნარატორი: <strong class="text-rose-400">გამორთული</strong>';
+                stopSpeech();
+                showVisualAlert('ხმოვანი ნარატორი გამორთულია.', 'info');
+            }
+        }
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) {
+                showVisualAlert('თქვენს ბრაუზერს ხმოვანი წაკითხვის მხარდაჭერა არ აქვს.', 'error');
+                return;
+            }
+
+            window.speechSynthesis.cancel(); // stop existing speech
+
+            if (!text || text.trim() === '') return;
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Try to find a Georgian voice, fallback to default/English if unavailable
+            const voices = window.speechSynthesis.getVoices();
+            const kaVoice = voices.find(v => v.lang.includes('ka') || v.lang.includes('GE'));
+            if (kaVoice) {
+                utterance.voice = kaVoice;
+                utterance.lang = 'ka-GE';
+            } else {
+                utterance.lang = 'ka'; // Browser fallback
+            }
+
+            utterance.rate = 0.95;
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function stopSpeech() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function readEntirePage() {
+            const mainContent = document.getElementById('main-content');
+            const pageText = mainContent.innerText || mainContent.textContent;
+            showVisualAlert('იწყება გვერდის სრული წაკითხვა...', 'info');
+            speakText("INCLUDIA - ინკლუზიური პლატფორმა. " + pageText.substring(0, 500) + "... გვერდის ნაწილი წაკითხულია.");
+        }
+
+        function setupNarratorHoverEvents() {
+            document.addEventListener('mouseover', (e) => {
+                if (!state.narratorActive) return;
+                const target = e.target.closest('h1, h2, h3, button, a, p, [role="button"]');
+                if (target && target.innerText) {
+                    speakText(target.innerText);
+                }
+            });
+
+            document.addEventListener('focusin', (e) => {
+                if (!state.narratorActive) return;
+                const target = e.target.closest('h1, h2, h3, button, a, input, select, textarea, [tabindex="0"]');
+                if (target) {
+                    const textToRead = target.getAttribute('aria-label') || target.innerText || target.placeholder || target.title;
+                    if (textToRead) speakText(textToRead);
+                }
+            });
+        }
+
+        /* ==========================================================================
+           4. VISUAL & ACCESSIBILITY TOGGLES (WCAG AAA)
+           ========================================================================== */
+        function toggleHighContrast() {
+            state.highContrast = !state.highContrast;
+            const body = document.getElementById('body-tag');
+            const btn = document.getElementById('btn-high-contrast');
+
+            if (state.highContrast) {
+                body.classList.add('high-contrast');
+                btn.setAttribute('aria-pressed', 'true');
+                showVisualAlert('მაღალი კონტრასტულობის რეჟიმი ჩაირთო', 'info');
+            } else {
+                body.classList.remove('high-contrast');
+                btn.setAttribute('aria-pressed', 'false');
+                showVisualAlert('მაღალი კონტრასტულობის რეჟიმი გამორთო', 'info');
+            }
+        }
+
+        function setFontSize(percent) {
+            state.fontSizePct = percent;
+            document.documentElement.style.fontSize = percent + '%';
+            showVisualAlert(`შრიფტის ზომა შეცვლილია: ${percent}%`, 'info');
+        }
+
+        function toggleDyslexiaFont() {
+            state.dyslexiaFont = !state.dyslexiaFont;
+            const body = document.getElementById('body-tag');
+            const btn = document.getElementById('btn-dyslexia-font');
+
+            if (state.dyslexiaFont) {
+                body.classList.add('dyslexia-font');
+                btn.setAttribute('aria-pressed', 'true');
+                showVisualAlert('დისლექსიური შრიფტი გააქტიურდა', 'info');
+            } else {
+                body.classList.remove('dyslexia-font');
+                btn.setAttribute('aria-pressed', 'false');
+                showVisualAlert('სტანდარტული შრიფტი დაბრუნდა', 'info');
+            }
+        }
+
+        function toggleHighlightInteractive() {
+            state.highlightInteractive = !state.highlightInteractive;
+            const body = document.getElementById('body-tag');
+            const btn = document.getElementById('btn-highlight-interactive');
+
+            if (state.highlightInteractive) {
+                body.classList.add('highlight-interactive');
+                btn.setAttribute('aria-pressed', 'true');
+                showVisualAlert('ინტერაქტიული ელემენტები გამოკვეთილია', 'info');
+            } else {
+                body.classList.remove('highlight-interactive');
+                btn.setAttribute('aria-pressed', 'false');
+                showVisualAlert('გამოკვეთა გამორთულია', 'info');
+            }
+        }
+
+        /* ==========================================================================
+           5. VISUAL ALERT BANNER SYSTEM (HEARING IMPAIRMENT FRIENDLY)
+           ========================================================================== */
+        function showVisualAlert(message, type = 'info') {
+            const container = document.getElementById('visual-alert-container');
+            const alert = document.createElement('div');
+
+            let bgColors = 'bg-slate-900 border-slate-700 text-white';
+            let icon = 'fa-info-circle text-sky-400';
+
+            if (type === 'success') {
+                bgColors = 'bg-emerald-900 border-emerald-500 text-white';
+                icon = 'fa-circle-check text-emerald-400';
+            } else if (type === 'error') {
+                bgColors = 'bg-rose-900 border-rose-500 text-white';
+                icon = 'fa-triangle-exclamation text-rose-400';
+            }
+
+            alert.className = `p-4 rounded-xl border-2 shadow-2xl flex items-center space-x-3 visual-alert-flash pointer-events-auto transition-all transform translate-y-0 ${bgColors}`;
+            alert.setAttribute('role', 'alert');
+            alert.innerHTML = `
+                <i class="fa-solid ${icon} text-2xl shrink-0" aria-hidden="true"></i>
+                <div class="flex-grow">
+                    <p class="font-bold text-sm">${message}</p>
+                    <span class="text-[10px] opacity-75 uppercase tracking-wider block">ვიზუალური შეტყობინება</span>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white p-1" aria-label="შეტყობინების დახურვა">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            `;
+
+            container.appendChild(alert);
+
+            // Announce to narrator if active
+            if (state.narratorActive) {
+                speakText(message);
+            }
+
+            // Remove automatically after 5 seconds
+            setTimeout(() => {
+                if (alert.parentElement) alert.remove();
+            }, 5000);
+        }
+
+        function triggerAccessibilityGuide() {
+            showVisualAlert("კლავიატურით ნავიგაციისთვის გამოიყენეთ TAB და ENTER ღილაკები.", "info");
+        }
+
+        /* ==========================================================================
+           6. FILTERING LOGIC
+           ========================================================================== */
+        function setCategoryFilter(cat) {
+            state.categoryFilter = cat;
+            
+            // Update Tab active states
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-600', 'text-white');
+                btn.classList.add('bg-slate-100', 'text-slate-700');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            const activeBtn = document.getElementById(`cat-${cat}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-100', 'text-slate-700');
+                activeBtn.classList.add('bg-brand-600', 'text-white');
+                activeBtn.setAttribute('aria-selected', 'true');
+            }
+
+            renderCards();
+        }
+
+        function toggleNeedFilter(needKey) {
+            const index = state.selectedNeeds.indexOf(needKey);
+            const btn = document.getElementById(`filter-${needKey}`);
+
+            if (index > -1) {
+                state.selectedNeeds.splice(index, 1);
+                btn.classList.remove('border-brand-600', 'bg-brand-50');
+                btn.classList.add('border-slate-200', 'bg-slate-50');
+                btn.setAttribute('aria-pressed', 'false');
+            } else {
+                state.selectedNeeds.push(needKey);
+                btn.classList.remove('border-slate-200', 'bg-slate-50');
+                btn.classList.add('border-brand-600', 'bg-brand-50');
+                btn.setAttribute('aria-pressed', 'true');
+            }
+
+            renderCards();
+        }
+
+        function resetFilters() {
+            state.categoryFilter = 'all';
+            state.selectedNeeds = [];
+            
+            document.querySelectorAll('.need-btn').forEach(btn => {
+                btn.classList.remove('border-brand-600', 'bg-brand-50');
+                btn.classList.add('border-slate-200', 'bg-slate-50');
+                btn.setAttribute('aria-pressed', 'false');
+            });
+
+            setCategoryFilter('all');
+            showVisualAlert('ყველა ფილტრი გასუფთავდა', 'info');
+        }
+
+        /* ==========================================================================
+           7. RENDER CARDS & BADGES
+           ========================================================================== */
+        function renderCards() {
+            const grid = document.getElementById('activity-cards-grid');
+            grid.innerHTML = '';
+
+            const filtered = activities.filter(item => {
+                // Category match
+                const matchCategory = state.categoryFilter === 'all' || item.category === state.categoryFilter;
+                
+                // Needs match (must contain ALL selected needs)
+                const matchNeeds = state.selectedNeeds.every(need => item.needs.includes(need));
+
+                return matchCategory && matchNeeds;
+            });
+
+            document.getElementById('results-count-text').innerHTML = `მოიძებნა <strong class="text-slate-900">${filtered.length}</strong> ხელმისაწვდომი აქტივობა`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full bg-white p-12 rounded-2xl text-center border border-slate-200 space-y-4">
+                        <i class="fa-solid fa-filter-circle-xmark text-5xl text-slate-400" aria-hidden="true"></i>
+                        <h3 class="text-xl font-bold text-slate-800">აქტივობა ვერ მოიძებნა</h3>
+                        <p class="text-sm text-slate-600">გთხოვთ შეცვალოთ ფილტრის პარამეტრები ან გაასუფთაოთ არჩევანი.</p>
+                        <button onclick="resetFilters()" class="min-h-[48px] px-6 py-2 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition">
+                            ფილტრების გასუფთავება
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const card = document.createElement('article');
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-md border border-slate-200 hover:shadow-xl transition-all duration-300 flex flex-col justify-between";
+
+                // Accessibility Badge Icons HTML
+                let needBadgesHtml = '';
+                if (item.needs.includes('wheelchair')) {
+                    needBadgesHtml += `<span class="px-2.5 py-1 rounded-md bg-blue-100 text-blue-800 text-xs font-bold flex items-center space-x-1" title="ეტლით მისაწვდომი"><i class="fa-solid fa-wheelchair" aria-hidden="true"></i><span>ეტლი</span></span>`;
+                }
+                if (item.needs.includes('visual')) {
+                    needBadgesHtml += `<span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-900 text-xs font-bold flex items-center space-x-1" title="მხედველობის ადაპტაცია"><i class="fa-solid fa-eye" aria-hidden="true"></i><span>ტაქტილი</span></span>`;
+                }
+                if (item.needs.includes('hearing')) {
+                    needBadgesHtml += `<span class="px-2.5 py-1 rounded-md bg-indigo-100 text-indigo-900 text-xs font-bold flex items-center space-x-1" title="სმენის ადაპტაცია"><i class="fa-solid fa-hands-asl-interpreting" aria-hidden="true"></i><span>ჟესტური</span></span>`;
+                }
+                if (item.needs.includes('sensory')) {
+                    needBadgesHtml += `<span class="px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-900 text-xs font-bold flex items-center space-x-1" title="სენსორულად მშვიდი"><i class="fa-solid fa-brain" aria-hidden="true"></i><span>მშვიდი</span></span>`;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <!-- Image Container with Badges -->
+                        <div class="relative h-48 bg-slate-200 overflow-hidden">
+                            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover transition transform hover:scale-105 duration-500" onerror="this.src='https://placehold.co/600x400/0284c7/ffffff?text=INCLUDIA'">
+                            
+                            <!-- Verification Badge -->
+                            <button onclick="openVerificationModal('${item.id}')" 
+                                    class="absolute top-3 left-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center space-x-1 focus:ring-2 focus:ring-white"
+                                    title="დააჭირეთ ვერიფიკაციის ჩექლისტის სანახავად">
+                                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                                <span>✓ ვერიფიცირებული</span>
+                            </button>
+
+                            <div class="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-md font-semibold">
+                                <i class="fa-solid fa-location-dot text-amber-400 mr-1" aria-hidden="true"></i>${item.location}
+                            </div>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-5 space-y-4">
+                            <div class="flex items-center justify-between text-xs text-slate-500 font-bold uppercase tracking-wider">
+                                <span>${getCategoryLabel(item.category)}</span>
+                                <span class="text-amber-600 flex items-center"><i class="fa-solid fa-star mr-1" aria-hidden="true"></i>${item.rating} (${item.reviewsCount})</span>
+                            </div>
+
+                            <h3 class="text-lg font-bold text-slate-900 leading-snug">${item.title}</h3>
+
+                            <p class="text-xs sm:text-sm text-slate-600 line-clamp-3">${item.description}</p>
+
+                            <!-- Special Accessibility Feature Badges -->
+                            <div class="space-y-1.5 pt-2 border-t border-slate-100">
+                                ${item.signLanguageAvailable ? `
+                                    <div class="text-xs text-indigo-700 font-bold flex items-center space-x-1">
+                                        <i class="fa-solid fa-hands-asl-interpreting" aria-hidden="true"></i>
+                                        <span>ჟესტური ენის თარჯიმანი ხელმისაწვდომია</span>
+                                    </div>
+                                ` : ''}
+                                ${item.visualInstructions ? `
+                                    <div class="text-xs text-emerald-700 font-bold flex items-center space-x-1">
+                                        <i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>
+                                        <span>ვიზუალური ინსტრუქციები უზრუნველყოფილია</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <!-- Needs Tag Row -->
+                            <div class="flex flex-wrap gap-1.5 pt-1">
+                                ${needBadgesHtml}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer & Booking Button -->
+                    <div class="p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs text-slate-500 block">ფასი 1 პირზე</span>
+                            <span class="text-xl font-black text-slate-900">${item.price} ₾</span>
+                        </div>
+                        <button onclick="openBookingModal('${item.id}')" 
+                                class="min-h-[48px] px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center space-x-2 focus:ring-4 focus:ring-brand-300">
+                            <span>დაჯავშნა</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function getCategoryLabel(cat) {
+            if (cat === 'hotel') return 'სასტუმრო / განთავსება';
+            if (cat === 'workshop') return 'მასტერკლასი';
+            if (cat === 'tour') return 'ინკლუზიური ტური';
+            return 'აქტივობა';
+        }
+
+        /* ==========================================================================
+           8. VERIFICATION MODAL LOGIC
+           ========================================================================== */
+        function openVerificationModal(itemId) {
+            const item = activities.find(a => a.id === itemId);
+            if (!item) return;
+
+            document.getElementById('verification-item-name').innerText = item.title;
+            const checklistContainer = document.getElementById('verification-checklist-list');
+            checklistContainer.innerHTML = '';
+
+            item.verificationChecklist.forEach(check => {
+                const div = document.createElement('div');
+                div.className = "flex items-start space-x-3 text-sm text-slate-800";
+                div.innerHTML = `
+                    <i class="fa-solid fa-check text-emerald-500 mt-1 shrink-0" aria-hidden="true"></i>
+                    <span>${check}</span>
+                `;
+                checklistContainer.appendChild(div);
+            });
+
+            const modal = document.getElementById('modal-verification');
+            modal.classList.remove('hidden');
+            modal.querySelector('button').focus();
+
+            showVisualAlert('გახსნილია INCLUDIA ვერიფიკაციის დეტალური ოქმი', 'info');
+        }
+
+        function closeVerificationModal() {
+            document.getElementById('modal-verification').classList.add('hidden');
+        }
+
+        /* ==========================================================================
+           9. BOOKING MODAL & CALCULATION LOGIC
+           ========================================================================== */
+        function openBookingModal(itemId) {
+            const item = activities.find(a => a.id === itemId);
+            if (!item) return;
+
+            state.activeBookingItem = item;
+            document.getElementById('booking-item-title').innerText = item.title + ` (${item.location})`;
+
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('booking-date').value = tomorrow.toISOString().split('T')[0];
+
+            updatePriceCalculation();
+
+            const modal = document.getElementById('modal-booking');
+            modal.classList.remove('hidden');
+            document.getElementById('user-name').focus();
+
+            showVisualAlert(`გახსნილია დაჯავშნის ფანჯარა: ${item.title}`, 'info');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('modal-booking').classList.add('hidden');
+        }
+
+        function updatePriceCalculation() {
+            if (!state.activeBookingItem) return;
+            const guests = parseInt(document.getElementById('booking-guests').value) || 1;
+            const unitPrice = state.activeBookingItem.price;
+
+            const hostSubtotal = unitPrice * guests;
+            const fee = Math.round(hostSubtotal * 0.10); // 10% platform service fee
+            const total = hostSubtotal + fee;
+
+            document.getElementById('price-host').innerText = `${hostSubtotal} ₾`;
+            document.getElementById('price-fee').innerText = `${fee} ₾`;
+            document.getElementById('price-total').innerText = `${total} ₾`;
+        }
+
+        function submitBooking(event) {
+            event.preventDefault();
+            const date = document.getElementById('booking-date').value;
+            const guests = document.getElementById('booking-guests').value;
+            const name = document.getElementById('user-name').value;
+            const phone = document.getElementById('user-phone').value;
+
+            closeBookingModal();
+
+            // Clear Form
+            document.getElementById('booking-form').reset();
+
+            // Visual Notification & Speech Output
+            const confirmMsg = `გმადლობთ ${name}! თქვენ წარმატებით დაჯავშნეთ "${state.activeBookingItem.title}" ${date} თარიღისთვის (${guests} პირი). დაგიკავშირდებით ნომერზე ${phone}.`;
+            showVisualAlert(confirmMsg, 'success');
+        }
+
+        /* ==========================================================================
+           10. HOST ONBOARDING MODAL LOGIC
+           ========================================================================== */
+        function openHostModal() {
+            const modal = document.getElementById('modal-host');
+            modal.classList.remove('hidden');
+            document.getElementById('host-title').focus();
+            showVisualAlert('გახსნილია მასპინძლის უფასო რეგისტრაციის ფანჯარა', 'info');
+        }
+
+        function closeHostModal() {
+            document.getElementById('modal-host').classList.add('hidden');
+        }
+
+        function submitHostActivity(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('host-title').value;
+            const category = document.getElementById('host-category').value;
+            const price = parseFloat(document.getElementById('host-price').value) || 0;
+            const location = document.getElementById('host-location').value;
+            const desc = document.getElementById('host-desc').value;
+
+            const needs = [];
+            if (document.getElementById('host-check-wheelchair').checked) needs.push('wheelchair');
+            if (document.getElementById('host-check-visual').checked) needs.push('visual');
+            if (document.getElementById('host-check-hearing').checked) needs.push('hearing');
+            if (document.getElementById('host-check-sensory').checked) needs.push('sensory');
+
+            const newActivity = {
+                id: 'act-' + Date.now(),
+                title: title,
+                category: category,
+                location: location,
+                price: price,
+                rating: 5.0,
+                reviewsCount: 1,
+                image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
+                verified: false,
+                needs: needs.length > 0 ? needs : ['wheelchair'],
+                signLanguageAvailable: document.getElementById('host-check-hearing').checked,
+                visualInstructions: true,
+                description: desc + ' (ახალი დამატებული - ელოდება ვერიფიკაციას)',
+                verificationChecklist: [
+                    "თვითშეფასება შევსებულია მასპინძლის მიერ",
+                    "INCLUDIA გუნდის ადგილზე ინსპექტირება დაგეგმილია"
+                ]
+            };
+
+            // Prepend new activity
+            activities.unshift(newActivity);
+            renderCards();
+
+            closeHostModal();
+            document.getElementById('host-form').reset();
+
+            showVisualAlert(`აქტივობა "${title}" წარმატებით დაემატა და განთავსდა პლატფორმაზე!`, 'success');
+        }
+
+        // Close modals on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeVerificationModal();
+                closeBookingModal();
+                closeHostModal();
+            }
+        });
+    </script>
+</body>
+</html>
